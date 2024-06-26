@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const JWT_SECRET = process.env.JWT_SECRET as string;
+
 interface TokenPayload {
   id: string;
   iat: number;
@@ -11,7 +13,7 @@ interface TokenPayload {
 }
 
 export const authMiddleware = (
-  req: Request | any, // TODO: change the any type
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -19,11 +21,11 @@ export const authMiddleware = (
   if (!token)
     return res.status(401).json({ error: "Access denied, token missing" });
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    ) as TokenPayload;
-    req.user = { id: decoded.id };
+    const { user } = req.body;
+    let userReq = user;
+
+    const decoded = jwt.verify(token, JWT_SECRET) as TokenPayload;
+    userReq = { id: decoded.id };
     next();
   } catch (error) {
     res.status(401).json({ error: "Invalid token" });

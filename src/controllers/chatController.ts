@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
 import Message from "../models/Message";
 
-// TODO fix any type
-export const sendMessage = async (req: Request | any, res: Response) => {
+export const sendMessage = async (req: Request, res: Response) => {
   try {
-    const { receiver, text, imageUrl, audioUrl } = req.body;
+    const { receiver, text, imageUrl, audioUrl, user } = req.body;
     const message = new Message({
-      sender: req.user.id,
+      sender: user.id,
       receiver,
       text,
       imageUrl,

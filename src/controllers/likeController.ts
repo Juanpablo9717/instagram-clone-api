@@ -2,18 +2,18 @@ import { Request, Response } from "express";
 import Like from "../models/Like";
 import Post from "../models/Post";
 
-// TODO fix any type
-export const likePost = async (req: Request | any, res: Response) => {
+export const likePost = async (req: Request, res: Response) => {
   try {
     const { postId } = req.params;
+    const { user } = req.body;
 
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ error: "Post not found" });
 
-    const like = await Like.findOne({ user: req.user.id, post: postId });
+    const like = await Like.findOne({ user: user.id, post: postId });
     if (like) return res.status(400).json({ error: "Post already liked" });
 
-    const newLike = new Like({ user: req.user.id, post: postId });
+    const newLike = new Like({ user: user.id, post: postId });
 
     await newLike.save();
     // TODO fix new like id
@@ -25,11 +25,12 @@ export const likePost = async (req: Request | any, res: Response) => {
   }
 };
 
-// TODO fix any type
-export const unlikePost = async (req: Request | any, res: Response) => {
+export const unlikePost = async (req: Request, res: Response) => {
   try {
     const { postId } = req.params;
-    const like = await Like.findOne({ user: req.user.id, post: postId });
+    const { user } = req.body;
+
+    const like = await Like.findOne({ user: user.id, post: postId });
     if (!like) return res.status(404).json({ error: "Like not found" });
 
     // TODO fix .remove method

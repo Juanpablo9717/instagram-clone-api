@@ -1,37 +1,33 @@
-import express, { NextFunction, Request, Response } from "express";
-import http from "http";
-import socketIo from "socket.io";
-import { authMiddleware } from "./middlewares/authMiddleware";
+// import express, { NextFunction, Request, Response } from "express";
+// import http from "http";
+// import socketIo from "socket.io";
+// import { authMiddleware } from "./middlewares/authMiddleware";
+// import { app } from "./app";
 
-const app = express();
-const server = http.createServer(app);
-const io = new socketIo.Server(server);
+// const server = http.createServer(app);
+// const io = new socketIo.Server(server);
 
-io.use((socket, next) => {
-  authMiddleware(
-    socket.request as Request,
-    {} as Response,
-    next as NextFunction
-  );
-});
+// io.use((socket, next) => {
+//   authMiddleware(
+//     socket.request as Request,
+//     {} as Response,
+//     next as NextFunction
+//   );
+// });
 
-io.on("connection", (socket) => {
-  console.log("A user connected");
+// io.on("connection", (socket) => {
+//   console.log("A user connected");
 
-  socket.on("join", (room) => {
-    socket.join(room);
-    console.log(`User joined room: ${room}`);
-  });
+//   socket.on("join", (room) => {
+//     socket.join(room);
+//     console.log(`User joined room: ${room}`);
+//   });
 
-  socket.on("message", (data) => {
-    io.to(data.room).emit("message", data);
-  });
+//   socket.on("message", (data) => {
+//     io.to(data.room).emit("message", data);
+//   });
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
-});
-
-server.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
+//   socket.on("disconnect", () => {
+//     console.log("User disconnected");
+//   });
+// });

@@ -5,8 +5,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const JWT_SECRET = process.env.JWT_SECRET as string;
+
 const createToken = (user: IUser) => {
-  return jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
+  return jwt.sign({ id: user._id }, JWT_SECRET, {
     expiresIn: "1d",
   });
 };
@@ -14,7 +16,14 @@ const createToken = (user: IUser) => {
 export const register = async (req: Request, res: Response) => {
   try {
     const { username, email, password } = req.body;
-    const user = new User({ username, email, password });
+
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+
+    user = new User({ username, email, password });
+
     await user.save();
     const token = createToken(user);
     res.status(201).json({ token });

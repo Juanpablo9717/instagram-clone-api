@@ -3,7 +3,9 @@ import User from "../models/User";
 
 export const getUser = async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.params.id).select("-password");
+    const { id } = req.params;
+
+    const user = await User.findById(id).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });
     res.status(200).json(user);
   } catch (error) {
@@ -11,19 +13,24 @@ export const getUser = async (req: Request, res: Response) => {
   }
 };
 
-// TODO fix any type
-export const followUser = async (req: Request | any, res: Response) => {
+export const followUser = async (req: Request, res: Response) => {
   try {
-    if (req.user.id === req.params.id)
+    const { user: userReq} = req.body;
+    const { id } = req.params;
+
+    if (userReq.id === id)
       return res.status(400).json({ error: "You cannot follow yourself" });
-    const user = await User.findById(req.params.id);
-    const currentUser = await User.findById(req.user.id);
+    
+    const user = await User.findById(id);
+    const currentUser = await User.findById(userReq.id);
     if (!user || !currentUser)
       return res.status(404).json({ error: "User not found" });
-    if (user.followers.includes(req.user.id))
+
+    if (user.followers.includes(userReq.id))
       return res.status(400).json({ error: "You already follow this user" });
-    user.followers.push(req.user.id);
-    currentUser.following.push(req.params.id);
+    
+    user.followers.push(userReq.id);
+    currentUser.following.push(id as any); // TODO fix any type
     await user.save();
     await currentUser.save();
     res.status(200).json({ message: "User followed" });
