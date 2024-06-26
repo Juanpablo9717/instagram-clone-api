@@ -1,0 +1,32 @@
+# Node.js
+node_modules/
+npm-debug.log
+
+# TypeScript
+dist/
+*.tsbuildinfo
+
+# Environment variables
+.env
+
+# Optional: macOS files
+.DS_Store
+
+# Optional: Visual Studio Code settings
+.vscode/
+
+# Optional: IDEA IntelliJ settings
+.idea/
+
+# Optional: Logs
+logs/
+*.log
+
+# Optional: Coverage reports
+coverage/
+
+# Optional: Miscellaneous
+*.tmp
+*.bak
+*.swp
+*~.nvmrc
